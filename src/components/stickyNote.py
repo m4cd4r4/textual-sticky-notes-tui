@@ -1,6 +1,6 @@
 from textual.widgets import Static
 from textual.reactive import reactive
-from models import Note
+from src.models import Note
 
 class StickyNote(Static):
     can_focus = True

@@ -1,7 +1,7 @@
 from textual.screen import ModalScreen
 from textual.widgets import Input, Button, ListView, ListItem, Label
 from textual.containers import Vertical, Horizontal
-from models import Note
+from src.models import Note
 
 class SearchModal(ModalScreen[Note]):
     """Search notes by title, content, or tags"""

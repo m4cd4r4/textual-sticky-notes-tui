@@ -4,7 +4,7 @@ from textual.widgets import TextArea, OptionList, Checkbox, Label, Button,Input
 from textual.containers import HorizontalGroup, ScrollableContainer
 from textual.widgets.option_list import Option
 
-from models import Note
+from src.models import Note
 
 class EditModal(ModalScreen[Note]):
 
