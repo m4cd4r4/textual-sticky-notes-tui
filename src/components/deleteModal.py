@@ -3,6 +3,9 @@ from textual.widgets import Static,TextArea,OptionList,Checkbox,Label,Button
 from textual.containers import Grid
 
 class DeleteModal(ModalScreen[bool]):
+    BINDINGS = [("escape", "dismiss", "Close")] 
+
+     
     
     def compose(self):
         with Grid(id="deleteModalContainer"):
@@ -18,3 +21,6 @@ class DeleteModal(ModalScreen[bool]):
                 self.dismiss(True)  
             else:
                 self.dismiss(False) 
+
+    def action_dismiss(self):
+        self.dismiss()

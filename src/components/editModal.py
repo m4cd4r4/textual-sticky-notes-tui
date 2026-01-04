@@ -4,9 +4,10 @@ from textual.widgets import TextArea, OptionList, Checkbox, Label, Button,Input
 from textual.containers import HorizontalGroup, ScrollableContainer
 from textual.widgets.option_list import Option
 
-from src.models import Note
+from models import Note
 
 class EditModal(ModalScreen[Note]):
+    BINDINGS = [("escape", "dismiss", "Close")] 
 
     note: Note
     oldNote: Note
@@ -62,3 +63,6 @@ class EditModal(ModalScreen[Note]):
             self.dismiss(self.note)  
         else:
             self.dismiss(self.oldNote)
+    
+    def action_dismiss(self):
+        self.dismiss()

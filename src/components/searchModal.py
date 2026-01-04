@@ -1,11 +1,12 @@
 from textual.screen import ModalScreen
 from textual.widgets import Input, Button, ListView, ListItem, Label
 from textual.containers import Vertical, Horizontal
-from src.models import Note
+from models import Note
 
 class SearchModal(ModalScreen[Note]):
     """Search notes by title, content, or tags"""
     
+    BINDINGS = [("escape", "dismiss", "Close")] 
     all_notes: list = []
     matching_notes: list = [] 
     
@@ -67,3 +68,6 @@ class SearchModal(ModalScreen[Note]):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "close":
             self.dismiss(None)  # Return None when closing
+
+    def action_dismiss(self):
+        self.dismiss()

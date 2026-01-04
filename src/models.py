@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import uuid
 
 @dataclass
 class Note:
@@ -7,3 +8,4 @@ class Note:
     tags: str = " "
     priority:int = 0
     pinned:bool = False
+    note_id: str = field(default_factory=lambda: str(uuid.uuid4()))

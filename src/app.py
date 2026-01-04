@@ -1,4 +1,6 @@
 import copy
+import uuid
+from storage import NoteStorage
 from dataclasses import replace
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
@@ -13,12 +15,12 @@ from models import Note
 
 
 class StickyNotesApp(App):
-    """Basit bir Textual uygulaması."""
     column_count = 3;
-
+    storage: NoteStorage = None
     default_note:Note = Note("New title",content="New")
 
     BINDINGS = [("d", "toggle_dark_mode", "toggle dark mode"),
+                ("ctrl+c", "quit", "Force Quit"),
                 ("right", "focus_next", "Next"),
                 ("left", "focus_previous", "Prev"),
                 ("up", "move_up", "Move Up"),
@@ -28,7 +30,9 @@ class StickyNotesApp(App):
                 ("e","edit_note","edit a note"),
                 ("1-9"," ","border color"),
                 ("s","search_notes","search notes"),
-                ("o", "sort_notes", "Sort notes") 
+                ("o", "sort_notes", "Sort notes"),
+                ("ctrl+s", "save_notes", "Save notes"), 
+                ("ctrl+l", "load_notes", "Load notes"),  
                 ]
     CSS_PATH = "style.css"
 
@@ -54,11 +58,14 @@ class StickyNotesApp(App):
         for _ in range(self.column_count):
             self.action_focus_next()
 
+    def on_mount(self) -> None:
+        self.storage = NoteStorage()
+        self.load_saved_notes()
+
     def compose(self) -> ComposeResult:
         yield Header()
         with ScrollableContainer(id="notes"):
-            yield StickyNote(note=copy.deepcopy(self.default_note))
-            yield StickyNote(note=copy.deepcopy(self.default_note))
+            pass
         yield Footer()
 
     def action_toggle_dark_mode(self):
@@ -67,10 +74,12 @@ class StickyNotesApp(App):
     @work
     async def action_add_note(self):
         new_note = copy.deepcopy(self.default_note)
+        new_note.note_id = str(uuid.uuid4())
         stickyNote = StickyNote(note=new_note)
         container = self.query_one("#notes")
         container.mount(stickyNote)
         stickyNote.scroll_visible()
+        self.action_save_notes()
 
     def action_sort_notes(self):
         self.sort_notes()
@@ -91,6 +100,7 @@ class StickyNotesApp(App):
         
         for i, note in enumerate(sorted_notes):
             container.move_child(note, after=len(container.children) - 1)
+        self.action_save_notes()
 
     @work
     async def action_delete_note(self):
@@ -100,6 +110,7 @@ class StickyNotesApp(App):
             confirm = await self.push_screen_wait(DeleteModal())
             if confirm:
                 focused_widget.remove()
+                self.action_save_notes()
 
     @work
     async def action_edit_note(self):
@@ -109,44 +120,70 @@ class StickyNotesApp(App):
             if updatedNote:
                 focused_widget.note = updatedNote
                 
-                # Reactive properties'i güncelle
                 focused_widget.priority_level = updatedNote.priority
                 focused_widget.is_pinned = updatedNote.pinned
                 
-                # Border title'ı güncelle
                 focused_widget.update_title()
                 
-                # Content'i güncelle
                 content_widget = focused_widget.query_one("#noteContent")
                 content_widget.update(updatedNote.content)
+                self.action_save_notes()
 
     @work
     async def action_search_notes(self):
         """Search through all notes"""
-        # Tüm notları ve widget'larını topla
-        all_notes = []
-        note_widgets = {}
-        
-        for sticky_note in self.query(StickyNote):
-            all_notes.append(sticky_note.note)
-            # Note objesinin id'sini key olarak kullan
-            note_widgets[id(sticky_note.note)] = sticky_note
+        all_sticky_notes = list(self.query(StickyNote))
+        all_notes = [sn.note for sn in all_sticky_notes]
         
         if not all_notes:
             self.notify("No notes to search!", severity="warning")
             return
-        
-        # Search modal'ını aç
+
         selected_note = await self.push_screen_wait(SearchModal(all_notes))
         
-        # Eğer bir not seçildiyse
         if selected_note is not None:
-            # Seçilen nota karşılık gelen widget'ı bul
-            target_widget = note_widgets.get(id(selected_note))
-            if target_widget:
-                target_widget.focus()
-                target_widget.scroll_visible()
-                self.notify(f"Found: {selected_note.noteTitle}", severity="information")
+            for sticky_note in all_sticky_notes:
+                if sticky_note.note.note_id == selected_note.note_id:
+                    sticky_note.focus()
+                    sticky_note.scroll_visible()
+                    self.notify(f"Found: {selected_note.noteTitle}", severity="information")
+                    return
+            
+            self.notify("Could not find the note", severity="error")
+
+    def load_saved_notes(self):
+        notes_with_colors = self.storage.load_notes()
+        
+        if notes_with_colors:
+            container = self.query_one("#notes")
+            for widget in list(self.query(StickyNote)):
+                widget.remove()
+            
+            for note, color in notes_with_colors:
+                sticky_note = StickyNote(note=note)
+                sticky_note.user_color = color
+                sticky_note.color = color
+                sticky_note.priority_level = note.priority
+                sticky_note.is_pinned = note.pinned
+                container.mount(sticky_note)
+                
+
+
+            
+            self.notify(f"Loaded {len(notes_with_colors)} notes!", severity="information")
+
+    def action_save_notes(self):
+        notes_with_colors = []
+        for sticky_note in self.query(StickyNote):
+            notes_with_colors.append((sticky_note.note, sticky_note.color))
+        
+        if self.storage.save_notes(notes_with_colors):
+            self.notify(f"💾 Saved {len(notes_with_colors)} notes!", severity="success")
+        else:
+            self.notify("Failed to save notes", severity="error")
+
+    def action_load_notes(self):
+        self.load_saved_notes()
 
     def _on_resize(self, event):
         notes_container = self.query_one("#notes")

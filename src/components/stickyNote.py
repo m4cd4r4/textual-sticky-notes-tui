@@ -1,11 +1,12 @@
 from textual.widgets import Static
 from textual.reactive import reactive
-from src.models import Note
+from models import Note
 
 class StickyNote(Static):
     can_focus = True
     note: Note 
     color = reactive("white")
+    user_color = reactive(None) 
     priority_level = reactive(0)
     is_pinned = reactive(False)
 
@@ -33,7 +34,7 @@ class StickyNote(Static):
 
     def on_mount(self, event):
         self.update_title()
-        self.update_border_color()
+        self.watch_color(self.color)
 
     def compose(self):
         yield Static(self.note.content, id="noteContent")
@@ -49,18 +50,19 @@ class StickyNote(Static):
     def get_priority_icon(self):
         """Get icon based on priority level"""
         icons = {
-            0: "",           # trivial - no icon
-            1: "⚪",         # low
+            0: "",           # trivial  - no icon
+            1: "🔵",         # low
             2: "🟡",         # medium
             3: "🟠",         # high
             4: "🔴"          # critical
         }
         return icons.get(self.priority_level, "")
 
-    def update_border_color(self):
-        """Update border color based on priority"""
-        color = self.PRIORITY_COLORS.get(self.priority_level, "white")
-        self.color = color
+    def update_border_color(self):  
+        if self.user_color is not None:
+            self.color = self.user_color
+        else:
+            self.color = self.PRIORITY_COLORS.get(self.priority_level, "white")
 
     def watch_color(self, color: str):
         """React to color changes"""
@@ -76,5 +78,4 @@ class StickyNote(Static):
         """React to pin status changes"""
         self.note.pinned = pinned
         self.update_title()
-        # Pinned notlar daha kalın border'a sahip
         self.styles.border = ("heavy" if pinned else "solid", self.color)
