@@ -127,7 +127,7 @@ class StickyNotesApp(App):
                 
                 content_widget = focused_widget.query_one("#noteContent")
                 content_widget.update(updatedNote.content)
-                self.action_save_notes()
+                self.action_sort_notes()
 
     @work
     async def action_search_notes(self):

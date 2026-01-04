@@ -8,7 +8,7 @@ class StickyNote(Static):
     color = reactive("white")
     user_color = reactive(None) 
     priority_level = reactive(0)
-    is_pinned = reactive(False)
+    is_pinned = reactive(False,init=False)
 
     PRIORITY_COLORS = {
         0: "white",      # trivial
@@ -34,7 +34,7 @@ class StickyNote(Static):
 
     def on_mount(self, event):
         self.update_title()
-        self.watch_color(self.color)
+        self.update_border_color()
 
     def compose(self):
         yield Static(self.note.content, id="noteContent")
