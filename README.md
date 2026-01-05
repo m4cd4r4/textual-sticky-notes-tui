@@ -33,6 +33,8 @@
 * **Responsive Layout:** Grid layout automatically adjusts columns based on your terminal width.
 
 ---
+#GIF
+![Demo](assets/tutorial.gif)
 
 ## Installation
 
@@ -146,4 +148,5 @@ sticky-notes-tui/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
