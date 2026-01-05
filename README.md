@@ -33,7 +33,7 @@
 * **Responsive Layout:** Grid layout automatically adjusts columns based on your terminal width.
 
 ---
-#GIF
+# GIF
 ![Demo](assets/tutorial.gif)
 
 ## Installation
@@ -41,34 +41,42 @@
 ### Prerequisites
 
 - Python 3.8 or higher
+- **uv** (fast Python package manager)
 - A terminal emulator with TrueColor support (most modern terminals support this).
 
 ### Steps
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/yourusername/sticky-notes-tui.git](https://github.com/yourusername/sticky-notes-tui.git)
+    git clone [https://github.com/dengo07/textual-sticky-notes-tui.git](https://github.com/dengo07/textual-sticky-notes-tui.git)
     cd sticky-notes-tui
     ```
 
-2.  **Set up a Virtual Environment (Recommended)**
+2.  **Create and Sync the Environment**
     ```bash
-    python -m venv .venv
-    # On Windows:
-    .venv\Scripts\activate
-    # On macOS/Linux:
-    source .venv/bin/activate
+    uv sync
+    ```
+    This command:
+
+    -Creates a virtual environment
+        
+    -Installs dependencies from pyproject.toml
+        
+    -Uses the lockfile for reproducible installs
+
+
+
+3.  **Run the Application**
+    ```bash
+    uv run python src/main.py
     ```
 
-3.  **Install Dependencies**
-    ```bash
-    pip install textual
-    ```
+# Notes
+    No manual venv activation required
 
-4.  **Run the Application**
-    ```bash
-    python main.py
-    ```
+    No direct pip install needed
+
+    Fast, reproducible, and modern Python workflow
 
 ---
 
@@ -88,7 +96,7 @@ Once the application is running, you can use the following keys to interact with
 | **`d`** | **Toggle Theme** | Switch between Dark and Light mode. |
 | **`Ctrl+s`** | **Save** | Manually force save to disk. |
 | **`Ctrl+c`** | **Quit** | Force quit the application. |
-
+ 
 ### Navigation
 
 | Key | Action |
@@ -148,5 +156,6 @@ sticky-notes-tui/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
