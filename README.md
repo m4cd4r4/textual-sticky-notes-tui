@@ -97,7 +97,7 @@ Once the application is running, you can use the following keys to interact with
 
 | Key | Action |
 | :--- | :--- |
-| **`1` - `9`** | Change the background/border color of the selected note. |
+| **`1` - `9`** | Change the border color of the selected note. |
 
 ---
 
@@ -146,3 +146,4 @@ sticky-notes-tui/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
