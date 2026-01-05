@@ -16,8 +16,7 @@
 - [Priority & Organization](#priority--organization)
 - [Configuration & Storage](#configuration--storage)
 - [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+- [License](LICENSE)
 
 ---
 
@@ -156,6 +155,7 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
