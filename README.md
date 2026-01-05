@@ -144,7 +144,7 @@ The data is saved in a human-readable JSON format, allowing for easy backup or m
 ## Project Structure
 
 ```text
-sticky-notes-tui/
+src/
 ├── app.py                  # Main application logic (StickyNotesApp)
 ├── main.py                 # Entry point
 ├── models.py               # Data models (Note class)
@@ -156,6 +156,7 @@ sticky-notes-tui/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
