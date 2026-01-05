@@ -48,7 +48,7 @@
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/dengo07/textual-sticky-notes-tui.git](https://github.com/dengo07/textual-sticky-notes-tui.git)
+    git clone https://github.com/dengo07/textual-sticky-notes-tui.git
     cd sticky-notes-tui
     ```
 
@@ -186,6 +186,7 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
