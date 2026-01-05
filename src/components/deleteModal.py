@@ -1,5 +1,5 @@
 from textual.screen import ModalScreen
-from textual.widgets import Static,TextArea,OptionList,Checkbox,Label,Button
+from textual.widgets import Label,Button
 from textual.containers import Grid
 
 class DeleteModal(ModalScreen[bool]):
