@@ -43,6 +43,36 @@
 - **uv** (fast Python package manager)
 - A terminal emulator with TrueColor support (most modern terminals support this).
 
+## Global Installation (Linux)
+
+For Linux users, the project includes a helper script (`manage.sh`) that installs the application system-wide to `/usr/local/bin`. This allows you to launch the application from any terminal window by simply typing its name.
+
+### Installation
+
+1.  **Make the script executable:**
+    ```bash
+    chmod +x manage.sh
+    ```
+
+2.  **Install globally:**
+    Since this installs to a system directory, root privileges are required.
+    ```bash
+    sudo ./manage.sh install
+    ```
+
+3.  **Run the application:**
+    Once installed, you can start the app from anywhere (no sudo required):
+    ```bash
+    stickynotes
+    ```
+
+### Uninstallation
+
+To remove the application command from your system:
+
+```bash
+sudo ./manage.sh uninstall
+
 ### Steps
 
 1.  **Clone the Repository**
@@ -155,6 +185,7 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
