@@ -2,11 +2,10 @@
 set -e
 
 APP_NAME="stickynotes"
-# HEDEF DEĞİŞTİRİLDİ: Artık sistem geneli klasör
+
 BIN_DIR="/usr/local/bin"
 TARGET="$BIN_DIR/$APP_NAME"
 
-# 1. Proje dizinini bulma (Symlink çözücü)
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do 
   DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
@@ -15,7 +14,6 @@ while [ -h "$SOURCE" ]; do
 done
 PROJECT_DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
-# Yetki kontrolü için yardımcı fonksiyon
 check_root() {
   if [ "$EUID" -ne 0 ]; then
     echo "❌ Error: Installation to $BIN_DIR requires root privileges."
@@ -29,11 +27,10 @@ command_exists() {
 }
 
 install_self() {
-  check_root "install" # Root kontrolü
+  check_root "install" 
   
   echo "▶ Installing $APP_NAME globally to $BIN_DIR..."
 
-  # Hedef klasör yoksa oluştur (nadiren gerekir ama güvenlidir)
   if [ ! -d "$BIN_DIR" ]; then
     mkdir -p "$BIN_DIR"
   fi
@@ -48,10 +45,8 @@ install_self() {
     fi
   fi
 
-  # Scriptin çalıştırılabilir olduğundan emin ol
   chmod +x "$PROJECT_DIR/$(basename "${BASH_SOURCE[0]}")"
   
-  # Linki oluştur
   ln -s "$PROJECT_DIR/$(basename "${BASH_SOURCE[0]}")" "$TARGET"
 
   echo "✅ Installed to $TARGET"
@@ -59,7 +54,7 @@ install_self() {
 }
 
 uninstall_self() {
-  check_root "uninstall" # Root kontrolü
+  check_root "uninstall" 
 
   echo "▶ Uninstalling $APP_NAME..."
 
@@ -73,7 +68,6 @@ uninstall_self() {
 }
 
 run_app() {
-  # Çalıştırırken root olmaya gerek YOK, hatta olmamalı.
   command_exists uv || {
     echo "❌ uv is not installed"
     echo "➡ Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
