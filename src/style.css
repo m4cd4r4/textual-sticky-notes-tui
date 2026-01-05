@@ -24,7 +24,7 @@ StickyNote:focus{
 
 DeleteModal {
     align: center middle;
-    background: rgba(0, 0, 0, 0.5); /* Arka planı karartır */
+    background: rgba(0, 0, 0, 0.5); 
 }
 
 
