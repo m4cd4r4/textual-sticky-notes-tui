@@ -49,7 +49,7 @@
 1.  **Clone the Repository**
     ```bash
     git clone https://github.com/dengo07/textual-sticky-notes-tui.git
-    cd sticky-notes-tui
+    cd textual-sticky-notes-tui
     ```
 
 2.  **Create and Sync the Environment**
@@ -186,6 +186,7 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
