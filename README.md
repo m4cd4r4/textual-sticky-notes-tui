@@ -131,7 +131,7 @@ Once the application is running, you can use the following keys to interact with
 
 | Key | Action |
 | :--- | :--- |
-| **`Arrow Keys`** | Move focus between notes (Left, Right, Up, Down). |
+| **`Arrow Keys`**or**`h-j-k-l`** | Move focus between notes. |
 | **`Tab`** | Move focus between parts inside a modal. |
 
 ### Styling (When a note is focused)
@@ -187,6 +187,7 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
 
 
 
