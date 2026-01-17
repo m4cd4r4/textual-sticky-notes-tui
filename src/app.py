@@ -35,8 +35,11 @@ class StickyNotesApp(App):
                 ("1-9"," ","border color"),
                 ("s","search_notes","search notes"),
                 ("o", "sort_notes", "Sort notes"),
-                ("ctrl+s", "save_notes", "Save notes"), 
-                ("ctrl+l", "load_notes", "Load notes"),  
+                ("ctrl+s", "save_notes", "Save notes"),
+                ("ctrl+l", "load_notes", "Load notes"),
+                ("ctrl+a", "attach_file", "Attach file"),
+                ("ctrl+o", "open_attachment", "Open file"),
+                ("ctrl+t", "toggle_timestamps", "Show times"),
                 ]
     CSS_PATH = "style.css"
 
@@ -188,6 +191,79 @@ class StickyNotesApp(App):
 
     def action_load_notes(self):
         self.load_saved_notes()
+
+    @work
+    async def action_attach_file(self):
+        """Open attachment modal for focused note"""
+        focused_widget = self.screen.focused
+
+        if focused_widget is not None and isinstance(focused_widget, StickyNote):
+            from components.attachModal import AttachModal
+            file_path = await self.push_screen_wait(AttachModal(focused_widget.note.note_id))
+
+            if file_path:
+                from file_utils import copy_attachment
+                success, result = copy_attachment(file_path, focused_widget.note.note_id)
+
+                if success:
+                    # Add attachment path to note
+                    if not hasattr(focused_widget.note, 'attachments'):
+                        focused_widget.note.attachments = []
+                    focused_widget.note.attachments.append(result)
+
+                    # Update the display
+                    focused_widget.update_title()
+
+                    # Update timestamp
+                    from datetime import datetime
+                    if hasattr(focused_widget.note, 'updated_at'):
+                        focused_widget.note.updated_at = datetime.now().isoformat()
+
+                    self.action_save_notes()
+                    self.notify(f"📎 File attached successfully!", severity="success")
+                else:
+                    self.notify(f"❌ {result}", severity="error")
+        else:
+            self.notify("Select a note first!", severity="warning")
+
+    def action_open_attachment(self):
+        """Open first attachment of focused note"""
+        focused_widget = self.screen.focused
+
+        if focused_widget is not None and isinstance(focused_widget, StickyNote):
+            if hasattr(focused_widget.note, 'attachments') and focused_widget.note.attachments:
+                from file_utils import open_file
+                first_attachment = focused_widget.note.attachments[0]
+                success, message = open_file(first_attachment)
+
+                if success:
+                    self.notify(f"📂 Opened file", severity="information")
+                else:
+                    self.notify(f"❌ {message}", severity="error")
+            else:
+                self.notify("No attachments to open!", severity="warning")
+        else:
+            self.notify("Select a note first!", severity="warning")
+
+    def action_toggle_timestamps(self):
+        """Toggle timestamp display on all notes"""
+        all_sticky_notes = list(self.query(StickyNote))
+
+        if not all_sticky_notes:
+            self.notify("No notes to toggle!", severity="warning")
+            return
+
+        # Get current state from first note (they should all be the same)
+        current_state = all_sticky_notes[0].show_timestamps if hasattr(all_sticky_notes[0], 'show_timestamps') else False
+        new_state = not current_state
+
+        # Toggle all notes
+        for sticky_note in all_sticky_notes:
+            sticky_note.show_timestamps = new_state
+            sticky_note.update_title()
+
+        status = "shown" if new_state else "hidden"
+        self.notify(f"⏱️  Timestamps {status}", severity="information")
 
     def _on_resize(self, event):
         notes_container = self.query_one("#notes")
