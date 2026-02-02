@@ -48,7 +48,7 @@
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/dengo07/textual-sticky-notes-tui.git
+    git clone https://github.com/m4cd4r4/textual-sticky-notes-tui.git
     cd textual-sticky-notes-tui
     ```
 
@@ -172,11 +172,45 @@ The data is saved in a human-readable JSON format, allowing for easy backup or m
 
 ---
 
+## CLI Tool
+
+A command-line interface for adding notes programmatically (useful for automation and scripts):
+
+```bash
+# Add a note
+python src/cli.py add -t "Title" -c "Content" --tags "tag1,tag2" --color green
+
+# Add a session summary note
+python src/cli.py add -t "Session Summary" -c "Tasks done..." --session-note --project "MyProject"
+
+# List recent notes
+python src/cli.py list --limit 5
+
+# Search notes
+python src/cli.py search "keyword"
+```
+
+### Available Options
+
+| Option | Description |
+|--------|-------------|
+| `-t, --title` | Note title (required) |
+| `-c, --content` | Note content (required) |
+| `--tags` | Comma-separated tags |
+| `--color` | Note color (yellow, blue, green, pink, white, red, orange, purple, cyan) |
+| `--priority` | Priority level (0-4) |
+| `--pinned` | Pin the note |
+| `--session-note` | Mark as session summary with metadata |
+| `--project` | Project name (used with --session-note) |
+
+---
+
 ## Project Structure
 
 ```text
 src/
 ├── app.py                  # Main application logic (StickyNotesApp)
+├── cli.py                  # Command-line interface for automation
 ├── main.py                 # Entry point
 ├── models.py               # Data models (Note class)
 ├── storage.py              # JSON storage handler (Cross-platform)
@@ -187,6 +221,16 @@ src/
     ├── searchModal.py      # Search functionality
     └── deleteModal.py      # Confirmation popup
 ```
+
+---
+
+## Related Projects
+
+- [Sticky Notes Electron](https://github.com/m4cd4r4/stickynotes-electron) - Modern desktop GUI with glassmorphism design (syncs with TUI)
+
+## License
+
+MIT
 
 
 
