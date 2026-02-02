@@ -1,11 +1,13 @@
 import json
 import os
+import shutil
 from pathlib import Path
 from typing import List
 from models import Note
+from datetime import datetime
 import platform
 
-class NoteStorage:    
+class NoteStorage:
     def __init__(self, filename: str = "notes.json"):
         if platform.system() == "Linux":
             # XDG Base Directory Specification
@@ -16,11 +18,27 @@ class NoteStorage:
         else:  # Windows
             app_data = Path(os.environ.get('APPDATA', Path.home() / 'AppData' / 'Roaming'))
             self.storage_dir = app_data / 'StickyNotes'
-        
+
         self.storage_dir.mkdir(parents=True, exist_ok=True)
+        self.backup_dir = self.storage_dir / 'backups'
+        self.backup_dir.mkdir(parents=True, exist_ok=True)
         self.filepath = self.storage_dir / filename
-    
+
+    def _create_backup(self):
+        """Create timestamped backup before any save operation."""
+        if self.filepath.exists():
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            backup_file = self.backup_dir / f"notes-{timestamp}.json"
+            shutil.copy2(self.filepath, backup_file)
+
+            # Keep only last 20 backups
+            backups = sorted(self.backup_dir.glob("notes-*.json"), reverse=True)
+            for old_backup in backups[20:]:
+                old_backup.unlink()
+
     def save_notes(self, notes_with_colors: List[tuple]) -> bool:
+        # Always backup before saving
+        self._create_backup()
         try:
             notes_data = []
             for note, color in notes_with_colors:
